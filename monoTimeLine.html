@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Control de Monografía 2026</title>
+    <title>Control de Monografía 2026 - Actualizado</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
@@ -12,6 +12,7 @@
         .custom-scrollbar::-webkit-scrollbar { width: 4px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+        .timeline-bar { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900 min-h-screen p-4 md:p-8">
@@ -21,20 +22,20 @@
         <!-- Header -->
         <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 flex flex-col md:flex-row justify-between items-center gap-4">
             <div class="flex items-center gap-4">
-                <div class="bg-indigo-600 p-3 rounded-2xl text-white">
-                    <i data-lucide="file-text"></i>
+                <div class="bg-indigo-600 p-3 rounded-2xl text-white shadow-lg shadow-indigo-100">
+                    <i data-lucide="file-check"></i>
                 </div>
                 <div>
                     <h1 class="text-2xl font-black tracking-tight text-slate-800">Control de Monografía 2026</h1>
                     <p class="text-slate-500 text-sm font-medium flex items-center gap-2">
                         <i data-lucide="calendar" class="text-indigo-500 w-4 h-4"></i> 
-                        Hoy es <span id="current-date-text"></span>
+                        Hoy: <span id="current-date-text"></span>
                     </p>
                 </div>
             </div>
-            <div class="bg-indigo-50 px-4 py-2 rounded-full border border-indigo-100 flex items-center gap-3">
-                <i data-lucide="clock" class="text-indigo-600 w-4 h-4"></i>
-                <span class="text-sm font-bold text-indigo-700">El proceso inicia en 7 días</span>
+            <div class="bg-emerald-50 px-5 py-2 rounded-full border border-emerald-100 flex items-center gap-3">
+                <i data-lucide="info" class="text-emerald-600 w-4 h-4"></i>
+                <span class="text-sm font-bold text-emerald-700">Fechas sincronizadas con Notion</span>
             </div>
         </div>
 
@@ -45,41 +46,41 @@
                 <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-200">
                     <div class="flex items-center justify-between mb-8">
                         <h2 class="font-bold flex items-center gap-2 text-slate-700 uppercase tracking-wider text-xs">
-                            <i data-lucide="grip-horizontal" class="text-indigo-600 w-4 h-4"></i>
-                            Cronograma Detallado (Ene - Jul 2026)
+                            <i data-lucide="gantt-chart" class="text-indigo-600 w-4 h-4"></i>
+                            Cronograma Maestro (Enero - Julio 2026)
                         </h2>
                         <div class="flex gap-4 text-[10px] font-bold text-slate-400">
-                            <span class="flex items-center gap-1"><div class="w-2 h-2 rounded-full bg-indigo-500"></div> TRABAJO</span>
-                            <span class="flex items-center gap-1"><div class="w-2 h-2 rounded-full bg-rose-500"></div> ENTREGA</span>
+                            <span class="flex items-center gap-1"><div class="w-2 h-2 rounded-full bg-indigo-500"></div> FASE</span>
+                            <span class="flex items-center gap-1"><div class="w-2 h-2 rounded-full bg-rose-500"></div> ENTREGA FINAL</span>
                         </div>
                     </div>
 
                     <div class="relative pt-2 pb-6" id="timeline-container">
                         <!-- Current Date Indicator -->
                         <div id="now-indicator" class="absolute top-0 bottom-0 border-l-2 border-dashed border-indigo-200 z-10">
-                            <div class="bg-indigo-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded absolute -top-1 -left-1 transform -translate-x-1/2">
+                            <div class="bg-indigo-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded absolute -top-1 -left-1 transform -translate-x-1/2 shadow-sm">
                                 AHORA
                             </div>
                         </div>
                         
-                        <!-- Timeline bars will be injected here -->
-                        <div id="timeline-bars" class="space-y-3 relative z-20"></div>
+                        <div id="timeline-bars" class="space-y-2.5 relative z-20"></div>
                     </div>
                 </div>
 
-                <!-- List Table -->
+                <!-- Stage List -->
                 <div class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden">
                     <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
-                        <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest">Listado de Hitos</h3>
+                        <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest">Desglose de Actividades</h3>
+                        <span class="text-[10px] font-bold text-slate-400" id="total-days-label"></span>
                     </div>
-                    <div id="stage-list" class="max-h-[400px] overflow-y-auto divide-y divide-slate-50 custom-scrollbar"></div>
+                    <div id="stage-list" class="max-h-[450px] overflow-y-auto divide-y divide-slate-50 custom-scrollbar"></div>
                 </div>
             </div>
 
             <!-- Details Sidebar -->
             <div id="sidebar-container" class="lg:col-span-4 space-y-6">
                 <!-- Details Card -->
-                <div class="bg-white p-6 rounded-3xl shadow-lg border border-slate-200 relative overflow-hidden">
+                <div class="bg-white p-6 rounded-3xl shadow-lg border border-slate-200 relative overflow-hidden min-h-[400px]">
                     <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-50 rounded-full -mr-16 -mt-16 z-0"></div>
                     
                     <div class="relative z-10" id="detail-card-content">
@@ -90,26 +91,26 @@
                 <!-- Alert -->
                 <div class="bg-amber-50 p-6 rounded-3xl border border-amber-200">
                     <div class="flex gap-4">
-                        <i data-lucide="alert-circle" class="text-amber-600 shrink-0"></i>
+                        <i data-lucide="alert-triangle" class="text-amber-600 shrink-0"></i>
                         <div>
-                            <h4 class="text-sm font-bold text-amber-900 mb-1">Bloqueos de Fecha</h4>
+                            <h4 class="text-sm font-bold text-amber-900 mb-1">Dependencia de Fechas</h4>
                             <p id="alert-text" class="text-xs text-amber-700 leading-relaxed font-medium"></p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Global Progress -->
+                <!-- Progress Tracker -->
                 <div class="bg-slate-900 p-6 rounded-3xl text-white shadow-xl">
-                    <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Progreso Global</h4>
+                    <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Estado del Ciclo</h4>
                     <div class="flex items-end justify-between mb-2">
-                        <span class="text-3xl font-black">0%</span>
-                        <span class="text-xs font-bold text-slate-400 uppercase">Faltan 192 días</span>
+                        <span id="progress-percent" class="text-3xl font-black">0%</span>
+                        <span id="days-left" class="text-xs font-bold text-slate-400 uppercase">Calculando...</span>
                     </div>
                     <div class="w-full h-3 bg-slate-800 rounded-full overflow-hidden">
-                        <div class="h-full bg-indigo-500" style="width: 0%"></div>
+                        <div id="progress-bar-fill" class="h-full bg-indigo-500 transition-all duration-1000" style="width: 0%"></div>
                     </div>
-                    <p class="text-[10px] text-slate-500 mt-4 leading-normal">
-                        Basado en la fecha actual de 5 de enero de 2026. El contador se activará el 12 de enero.
+                    <p class="text-[10px] text-slate-500 mt-4 leading-normal italic">
+                        El inicio oficial es el 12 de enero de 2026. Los días restantes se calculan hasta la Entrega Final el 22 de julio.
                     </p>
                 </div>
             </div>
@@ -118,27 +119,31 @@
     </div>
 
     <script>
+        // Data updated based on the newest CSV export
         const projectStages = [
-            { id: 1, title: "Seleccion de Materia y Tema", start: "2026-01-12", end: "2026-01-20", category: "Inicio" },
-            { id: 2, title: "Definicion de pregunta", start: "2026-01-21", end: "2026-02-02", category: "Inicio" },
-            { id: 3, title: "Lectura Preliminar y fuentes", start: "2026-02-03", end: "2026-02-13", category: "Investigación" },
-            { id: 4, title: "Esquema y Plan de investigacion", start: "2026-02-16", end: "2026-02-24", category: "Investigación" },
-            { id: 5, title: "Primera Reflexion (RPPF)", start: "2026-02-25", end: "2026-03-04", category: "Reflexión" },
-            { id: 6, title: "Introduccion y Marco Teorico", start: "2026-03-05", end: "2026-03-20", category: "Redacción" },
-            { id: 7, title: "Metodologia y planificacion de recoleccion de datos", start: "2026-03-23", end: "2026-04-08", category: "Metodología" },
-            { id: 8, title: "Recoleccion de datos", start: "2026-04-09", end: "2026-04-21", category: "Metodología" },
+            { id: 1, title: "Seleccion de Materia y Tema", start: "2026-01-12", end: "2026-01-20", category: "Planificación" },
+            { id: 2, title: "Definicion de pregunta", start: "2026-01-21", end: "2026-02-03", category: "Planificación" },
+            { id: 3, title: "Descripcion de enfoque", start: "2026-02-04", end: "2026-02-10", category: "Metodología" },
+            { id: 4, title: "Descripcion de metodologia", start: "2026-02-11", end: "2026-02-17", category: "Metodología" },
+            { id: 5, title: "Reflexion 1 (Hito)", start: "2026-02-18", end: "2026-02-18", category: "Reflexión" },
+            { id: 6, title: "Borrador de introduccion", start: "2026-02-18", end: "2026-03-03", category: "Redacción" },
+            { id: 7, title: "Recoleccion de datos", start: "2026-03-04", end: "2026-03-17", category: "Campo" },
+            { id: 8, title: "Borrador Seccion de Analisis", start: "2026-03-18", end: "2026-04-21", category: "Análisis" },
             { id: 9, title: "Presentacion y analisis de datos", start: "2026-04-22", end: "2026-05-12", category: "Análisis" },
-            { id: 10, title: "Conclusiones", start: "2026-05-13", end: "2026-05-26", category: "Redacción" },
-            { id: 11, title: "Borrador Final 1", start: "2026-05-27", end: "2026-06-10", category: "Revisión" },
-            { id: 12, title: "Borrador Final 2", start: "2026-06-11", end: "2026-06-30", category: "Revisión" },
-            { id: 13, title: "Entrega Final Monografia 2026", start: "2026-07-01", end: "2026-07-15", category: "Entrega" }
+            { id: 10, title: "Reflexion 2 (Hito)", start: "2026-05-13", end: "2026-05-13", category: "Reflexión" },
+            { id: 11, title: "Conclusiones", start: "2026-05-13", end: "2026-05-26", category: "Redacción" },
+            { id: 12, title: "Borrador Final 1", start: "2026-05-27", end: "2026-06-10", category: "Revisión" },
+            { id: 13, title: "Borrador Final 2", start: "2026-06-11", end: "2026-07-08", category: "Revisión" },
+            { id: 14, title: "Entrega Final Monografia 2026", start: "2026-07-09", end: "2026-07-22", category: "Entrega" },
+            { id: 15, title: "Reflexion 3 (Hito Final)", start: "2026-07-23", end: "2026-07-23", category: "Reflexión" }
         ];
 
         let selectedId = 1;
-        const today = new Date("2026-01-05");
+        const today = new Date("2026-01-05"); // Current date for context
 
         function getDays(start, end) {
-            return Math.ceil((new Date(end) - new Date(start)) / (1000 * 60 * 60 * 24));
+            const diff = new Date(end) - new Date(start);
+            return Math.max(1, Math.ceil(diff / (1000 * 60 * 60 * 24)));
         }
 
         const totalStart = new Date(projectStages[0].start);
@@ -146,8 +151,8 @@
         const totalDuration = getDays(totalStart, totalEnd);
 
         function getPercent(date) {
-            const diff = getDays(totalStart, date);
-            return (diff / totalDuration) * 100;
+            const diff = new Date(date) - totalStart;
+            return (diff / (totalEnd - totalStart)) * 100;
         }
 
         function getStatus(start, end) {
@@ -170,33 +175,46 @@
         function render() {
             const selectedStage = projectStages.find(s => s.id === selectedId);
             
-            // Render current date
             document.getElementById('current-date-text').innerText = today.toLocaleDateString('es-ES', { dateStyle: 'full' });
+            document.getElementById('total-days-label').innerText = `DURACIÓN TOTAL: ${totalDuration} DÍAS`;
 
             // Position "Now" indicator
-            document.getElementById('now-indicator').style.left = `${Math.max(0, getPercent(today))}%`;
+            const nowPos = getPercent(today);
+            document.getElementById('now-indicator').style.left = `${Math.max(0, Math.min(100, nowPos))}%`;
+            document.getElementById('now-indicator').style.display = nowPos < 0 || nowPos > 100 ? 'none' : 'block';
+
+            // Progress Update
+            const finalDeliveryDate = new Date("2026-07-22");
+            const daysToFinal = Math.ceil((finalDeliveryDate - today) / (1000 * 60 * 60 * 24));
+            document.getElementById('days-left').innerText = `FALTAN ${daysToFinal} DÍAS`;
+            
+            const overallProgress = Math.max(0, Math.min(100, Math.round(getPercent(today))));
+            document.getElementById('progress-percent').innerText = `${overallProgress}%`;
+            document.getElementById('progress-bar-fill').style.width = `${overallProgress}%`;
 
             // Render Timeline Bars
             const timelineBars = document.getElementById('timeline-bars');
             timelineBars.innerHTML = projectStages.map(stage => {
                 const status = getStatus(stage.start, stage.end);
                 const isSelected = selectedId === stage.id;
-                const isFinal = stage.id === 13;
-                const left = getPercent(stage.start);
-                const width = Math.max(5, getPercent(stage.end) - getPercent(stage.start));
+                const left = Math.max(0, getPercent(stage.start));
+                const right = Math.min(100, getPercent(stage.end));
+                const width = Math.max(1, right - left); // Minimum 1% width for hitos
+
+                let barColor = "bg-indigo-500";
+                if (stage.category === 'Reflexión') barColor = "bg-emerald-500";
+                if (stage.category === 'Entrega') barColor = "bg-rose-500";
 
                 return `
-                    <div onclick="selectStage(${stage.id})" class="group cursor-pointer relative ${isSelected ? 'scale-[1.01]' : 'opacity-80 hover:opacity-100'} transition-all">
-                        <div class="flex justify-between items-center mb-1 px-1">
-                            <span class="text-[10px] font-bold uppercase truncate max-w-[200px] ${isSelected ? 'text-indigo-600' : 'text-slate-500'}">
-                                ${stage.id}. ${stage.title}
+                    <div onclick="selectStage(${stage.id})" class="group cursor-pointer relative ${isSelected ? 'z-30' : 'z-20 opacity-70 hover:opacity-100'} transition-all">
+                        <div class="flex justify-between items-center mb-0.5 px-1">
+                            <span class="text-[9px] font-black uppercase tracking-tight ${isSelected ? 'text-indigo-600' : 'text-slate-400'}">
+                                ${stage.title}
                             </span>
-                            <span class="text-[10px] font-mono text-slate-400">${formatDate(stage.start)} - ${formatDate(stage.end)}</span>
                         </div>
-                        <div class="h-6 w-full bg-slate-100 rounded-full overflow-hidden border border-slate-200/50">
-                            <div class="absolute h-6 transition-all duration-500 rounded-full flex items-center justify-end px-2 ${isFinal ? 'bg-rose-500' : 'bg-indigo-500'} ${isSelected ? 'ring-4 ring-indigo-100' : ''}"
+                        <div class="h-4 w-full bg-slate-100/50 rounded-full overflow-hidden relative">
+                            <div class="timeline-bar absolute h-4 rounded-full shadow-sm ${barColor} ${isSelected ? 'ring-2 ring-offset-1 ring-indigo-300' : ''}"
                                  style="left: ${left}%; width: ${width}%">
-                                 ${status === 'en curso' ? '<div class="w-2 h-2 bg-white rounded-full animate-pulse"></div>' : ''}
                             </div>
                         </div>
                     </div>
@@ -206,19 +224,22 @@
             // Render Stage List
             const stageList = document.getElementById('stage-list');
             stageList.innerHTML = projectStages.map(stage => `
-                <div onclick="selectStage(${stage.id})" class="p-4 hover:bg-slate-50 transition-colors cursor-pointer flex items-center justify-between ${selectedId === stage.id ? 'bg-indigo-50/50' : ''}">
+                <div onclick="selectStage(${stage.id})" class="p-4 hover:bg-slate-50 transition-colors cursor-pointer flex items-center justify-between ${selectedId === stage.id ? 'bg-indigo-50/50 border-l-4 border-l-indigo-500' : 'border-l-4 border-l-transparent'}">
                     <div class="flex items-center gap-4">
-                        <div class="w-8 h-8 rounded-xl flex items-center justify-center text-xs font-bold ${stage.id === 13 ? 'bg-rose-100 text-rose-600' : 'bg-slate-100 text-slate-500'}">
+                        <div class="w-7 h-7 rounded-lg flex items-center justify-center text-[10px] font-black ${
+                            stage.category === 'Reflexión' ? 'bg-emerald-100 text-emerald-700' : 
+                            stage.category === 'Entrega' ? 'bg-rose-100 text-rose-600' : 'bg-slate-100 text-slate-500'
+                        }">
                             ${stage.id}
                         </div>
                         <div>
-                            <div class="text-sm font-bold text-slate-800">${stage.title}</div>
-                            <div class="text-[10px] font-medium text-slate-400 uppercase">${stage.category}</div>
+                            <div class="text-sm font-bold text-slate-800 tracking-tight">${stage.title}</div>
+                            <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest">${stage.category}</div>
                         </div>
                     </div>
                     <div class="text-right">
                         <div class="text-xs font-bold text-slate-700">${formatDate(stage.start)} - ${formatDate(stage.end)}</div>
-                        <div class="text-[10px] text-slate-400">${getDays(stage.start, stage.end)} días</div>
+                        <div class="text-[9px] font-bold text-slate-300">${getDays(stage.start, stage.end)} d</div>
                     </div>
                 </div>
             `).join('');
@@ -227,52 +248,56 @@
             const detailCard = document.getElementById('detail-card-content');
             detailCard.innerHTML = `
                 <div class="flex items-center gap-2 mb-6">
-                    <i data-lucide="target" class="text-indigo-600 w-5 h-5"></i>
-                    <span class="text-xs font-black uppercase text-slate-400 tracking-wider">Ficha de Etapa</span>
+                    <i data-lucide="crosshair" class="text-indigo-600 w-5 h-5"></i>
+                    <span class="text-xs font-black uppercase text-slate-400 tracking-wider">Ficha de Seguimiento</span>
                 </div>
-                <h2 class="text-2xl font-black text-slate-800 mb-2 leading-tight">${selectedStage.title}</h2>
+                <h2 class="text-2xl font-black text-slate-800 mb-2 leading-tight tracking-tight">${selectedStage.title}</h2>
                 <div class="flex items-center gap-2 mb-6">
                     <span class="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-[10px] font-bold uppercase">${selectedStage.category}</span>
-                    <span class="bg-slate-100 text-slate-500 px-3 py-1 rounded-full text-[10px] font-bold uppercase">Fase ${selectedStage.id}</span>
+                    <span class="bg-slate-100 text-slate-500 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest">PASO ${selectedStage.id}/15</span>
                 </div>
                 <div class="space-y-4">
                     <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
-                        <div class="text-[10px] text-slate-400 font-bold uppercase mb-1 flex items-center gap-1">
-                            <i data-lucide="calendar" class="w-2.5 h-2.5"></i> Ventana de Tiempo
+                        <div class="text-[10px] text-slate-400 font-bold uppercase mb-1.5 flex items-center gap-1.5">
+                            <i data-lucide="clock-3" class="w-3 h-3"></i> Ventana de Ejecución
                         </div>
-                        <div class="text-slate-800 font-bold flex items-center gap-2">
-                            ${formatDate(selectedStage.start)} <i data-lucide="arrow-right" class="text-slate-400 w-3.5 h-3.5"></i> ${formatDate(selectedStage.end)}
+                        <div class="text-slate-800 font-bold flex items-center gap-3">
+                            ${formatDate(selectedStage.start)} <i data-lucide="chevron-right" class="text-slate-300 w-4 h-4"></i> ${formatDate(selectedStage.end)}
                         </div>
-                        <div class="text-[11px] text-slate-500 mt-1 font-medium">Año Académico 2026</div>
+                        <div class="text-[10px] text-slate-500 mt-2 font-semibold">Total: ${getDays(selectedStage.start, selectedStage.end)} días naturales</div>
                     </div>
-                    <div class="p-4 rounded-2xl border border-slate-100">
-                        <div class="text-[10px] text-slate-400 font-bold uppercase mb-3">Checklist Requerido</div>
-                        <ul class="space-y-3">
-                            <li class="flex items-center gap-3 text-xs text-slate-600 font-medium"><div class="w-4 h-4 rounded border border-slate-200 shrink-0"></div> Coordinación con Asesor</li>
-                            <li class="flex items-center gap-3 text-xs text-slate-600 font-medium"><div class="w-4 h-4 rounded border border-slate-200 shrink-0"></div> Validación de fuentes primarias</li>
-                            <li class="flex items-center gap-3 text-xs text-slate-600 font-medium"><div class="w-4 h-4 rounded border border-slate-200 shrink-0"></div> Subida a portal de Monografía</li>
-                        </ul>
+                    
+                    <div class="p-4 rounded-2xl border border-slate-100 bg-white shadow-sm">
+                        <h4 class="text-[10px] text-slate-400 font-bold uppercase mb-3">Checklist de Calidad</h4>
+                        <div class="space-y-2">
+                            <div class="flex items-center gap-3 text-xs text-slate-600">
+                                <i data-lucide="check-circle-2" class="w-4 h-4 text-slate-200"></i> Validar contra rúbrica IB
+                            </div>
+                            <div class="flex items-center gap-3 text-xs text-slate-600">
+                                <i data-lucide="check-circle-2" class="w-4 h-4 text-slate-200"></i> Carga en Notion
+                            </div>
+                            <div class="flex items-center gap-3 text-xs text-slate-600">
+                                <i data-lucide="check-circle-2" class="w-4 h-4 text-slate-200"></i> Firma de Asesor
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="mt-8 pt-6 border-t border-slate-100 flex items-center justify-between">
                     <div class="flex flex-col">
-                        <span class="text-[10px] font-black text-slate-400 uppercase">Esfuerzo</span>
-                        <span class="text-lg font-black text-indigo-600">${getDays(selectedStage.start, selectedStage.end)} d</span>
+                        <span class="text-[9px] font-black text-slate-300 uppercase">Esfuerzo Estimado</span>
+                        <span class="text-xl font-black text-slate-800">${getDays(selectedStage.start, selectedStage.end)} <span class="text-xs text-slate-400">días</span></span>
                     </div>
-                    <button onclick="selectStage(${Math.min(13, selectedId + 1)})" class="bg-slate-900 text-white p-3 rounded-2xl hover:bg-indigo-600 transition-colors">
-                        <i data-lucide="chevron-right"></i>
+                    <button onclick="selectStage(${Math.min(15, selectedId + 1)})" class="bg-indigo-600 text-white p-3 rounded-2xl hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100">
+                        <i data-lucide="arrow-right"></i>
                     </button>
                 </div>
             `;
 
-            // Update Alert text
-            document.getElementById('alert-text').innerHTML = `Según los datos, la etapa <strong>${selectedStage.title}</strong> está vinculada a dependencias de la etapa anterior. No se recomienda iniciar sin el visto bueno previo.`;
+            document.getElementById('alert-text').innerHTML = `La actividad <strong>${selectedStage.title}</strong> debe completarse antes del <strong>${formatDate(selectedStage.end)}</strong> para evitar retrasos en las entregas de borradores posteriores.`;
 
-            // Re-initialize Lucide Icons
             lucide.createIcons();
         }
 
-        // Initial render
         window.onload = render;
     </script>
 </body>
